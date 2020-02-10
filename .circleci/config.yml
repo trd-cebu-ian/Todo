@@ -64,7 +64,7 @@ jobs:
       - run: php artisan key:generate
       - run: 
             name: "PRINTING SSH"
-            command: echo ${SSH_VARIABLE_PRIVATE_KEY}
+            command: echo $SSH_VARIABLE_PRIVATE_KEY
 
       # run tests with phpunit or codecept
       - run: ./vendor/bin/phpunit
