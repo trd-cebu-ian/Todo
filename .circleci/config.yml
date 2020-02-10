@@ -4,6 +4,13 @@
 #
 version: 2
 jobs:
+
+  staging-job:
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "ed:ce:bf:aa:e0:81:1f:44:e9:2e:83:ff:fe:a4:74:e9"
+
   build:
     docker:
       # Specify the version you desire here
