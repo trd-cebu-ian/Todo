@@ -6,6 +6,10 @@ version: 2
 jobs:
 
   deploy-job:
+    docker:
+      # Specify the version you desire here
+      - image: circleci/php:7.3-stretch-node-browsers
+      
     steps:
       - add_ssh_keys:
           fingerprints:
