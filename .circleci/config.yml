@@ -5,17 +5,76 @@
 version: 2
 jobs:
 
-  deploy-job:
+  build:
     docker:
       # Specify the version you desire here
       - image: circleci/php:7.3-stretch-node-browsers
-      
-    steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "ed:ce:bf:aa:e0:81:1f:44:e9:2e:83:ff:fe:a4:74:e9"
 
-  build:
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # Using the RAM variation mitigates I/O contention
+      # for database intensive operations.
+      # - image: circleci/mysql:5.7-ram
+      # 
+      # - image: redis:3
+
+    steps:
+      - checkout
+
+      - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev
+      - run: sudo docker-php-ext-install zip
+
+      # Download and cache dependencies
+
+      # composer cache
+      - restore_cache:
+          keys:
+          # "composer.json" can be used if "composer.json"
+          # is not committed to the repository.
+          - v1-dependencies-{{ checksum "composer.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+
+      # node cache
+
+      - restore_cache:
+          keys:
+            - node-v4-{{ checksum "package.json" }}
+            - node-v4-
+      - run: npm install
+      - save_cache:
+          key: node-v4-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+            - ~/.yarn
+
+      # prepare the database
+      - run: touch database/database.sqlite
+      - run: php artisan migrate --env=testing --database=sqlite --force
+
+      # prepare .env
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+
+      # run tests with phpunit or codecept
+      - run: ./vendor/bin/phpunit
+      # this example uses codecept but you're not limited to it
+      # - run: ./vendor/bin/codecept build
+      # - run: ./vendor/bin/codecept run --xml result.xml
+      # - store_test_results:
+      #     path: tests/_output
+      # - store_artifacts:
+      #     path: tests/_output
+
+  staging:
     docker:
       # Specify the version you desire here
       - image: circleci/php:7.3-stretch-node-browsers
