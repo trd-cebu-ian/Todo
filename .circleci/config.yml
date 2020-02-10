@@ -62,9 +62,7 @@ jobs:
       # prepare .env
       - run: cp .env.example .env
       - run: php artisan key:generate
-      - run: 
-            name: "PRINTING SSH"
-            command: echo $SSH_VARIABLE_PRIVATE_KEY
+      - run: echo ${SSH_VARIABLE_PRIVATE_KEY}
 
       # run tests with phpunit or codecept
       - run: ./vendor/bin/phpunit
@@ -75,3 +73,4 @@ jobs:
       #     path: tests/_output
       # - store_artifacts:
       #     path: tests/_output
+
