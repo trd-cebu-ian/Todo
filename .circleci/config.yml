@@ -4,7 +4,7 @@ jobs:
     docker:
       # Specify the version you desire here
       - image: circleci/php:7.4-browsers
-      - image: circleci/mysql:5.8
+      - image: circleci/mysql:5.7
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_USER: homestead
