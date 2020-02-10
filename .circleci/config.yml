@@ -56,8 +56,9 @@ jobs:
             - ~/.yarn
 
       # prepare the database
-      #- run: touch storage/testing.sqlite
-      #- run: php artisan migrate --env=testing --database=sqlite_testing --force
+      # - run: touch storage/testing.sqlite
+      # - run: php artisan migrate --env=testing --database=sqlite_testing --force
+      run: cat .env
 
       # run tests with phpunit or codecept
       #- run: ./vendor/bin/phpunit
